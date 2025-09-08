@@ -17,4 +17,4 @@ This project explores topics in **parallel algorithms** and **parallel computing
 
 ## How to Build
 ```bash
-make
+make run
