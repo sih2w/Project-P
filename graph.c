@@ -1,6 +1,5 @@
 // gen_er.c — ER generator streaming "u v". Uniform endpoints; skips self-loops.
-// Usage: ./gen_er N M [undirected=1] [seed=1]
-// Build: gcc -O3 -march=native -pipe gen_er.c -o gen_er
+// Usage: ./gen_er N M [seed=1] [undirected=1]
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
