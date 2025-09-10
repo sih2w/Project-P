@@ -17,4 +17,8 @@ This project explores topics in **parallel algorithms** and **parallel computing
 
 ## How to Build
 ```bash
-make run
+# For compiling and running graph builder
+make rung
+
+# For compresser
+make runc
