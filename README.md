@@ -22,3 +22,6 @@ make rung
 
 # For compresser
 make runc
+
+# For loader
+make runl
