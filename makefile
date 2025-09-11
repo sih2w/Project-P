@@ -4,6 +4,9 @@ graph: graph.c
 compress: compress.c
 	gcc compress.c -o compress
 
+load: loadgraph.c
+	gcc loadgraph.c -o load
+
 clean:
 	rm -f graph rm -f *.o
 
@@ -12,3 +15,6 @@ rung: graph
 
 runc: compress
 	./compress
+
+runl: load
+	./load
