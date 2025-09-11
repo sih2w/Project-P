@@ -1,6 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+
+void save_graph(const char* filename, int total_vertices, int edge_count, int* row_ptr, int* col_index) {
+	FILE *f = fopen(filename, "wb");   // open binary file for writing
+    if (!f) {
+        perror("fopen");
+        return -1;
+    }
+
+    // write vertex count
+    fwrite(&total_vertices, sizeof(total_vertices), 1, f);
+    // write edge count
+    fwrite(&edge_count, sizeof(edge_count), 1, f);
+
+    // write row_ptr array (V+1 elements)
+    fwrite(row_ptr, sizeof(int), edge_count + 1, f);
+
+    // write col_index array (E elements)
+    fwrite(col_index, sizeof(int), total_vertices, f);
+
+    fclose(f);
+}
+
+
+
+
+
+
 int main() {
 	// Open File
 	FILE *file = fopen("edgelist.txt", "r");
@@ -126,8 +154,8 @@ int main() {
 	printf("\n");
 	
 
-
-
+	
+	save_graph("savefile", total_vertices, edge_count, row_ptr, col_index);
 
 
 
