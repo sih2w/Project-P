@@ -4,6 +4,11 @@
 #include <pthread.h>
 
 typedef struct {
+    int From;
+    int* To;
+} Node;
+
+typedef struct {
     int VerticeCount;
     int EdgeCount;
     int Seed;
@@ -14,26 +19,61 @@ typedef struct {
 typedef struct {
     int Seed;
     int Directed;
-    int** Tree;
+    Node* Tree;
     int EdgeCount;
     int StartVertexIndex;
     int EndVertexIndex;
 } Worker;
 
+int indexed(const int* connected_nodes, const int length, const int vertex_index) {
+    for (int index = 0; index < length; index++) {
+        if (connected_nodes[index] == vertex_index) return 1;
+    }
+    return 0;
+}
+
+int connect(Node* tree, Node* node) {
+
+}
+
 void* create_subtree(void* arg) {
     Worker* worker = (Worker*) arg;
 
-    worker->Tree[0] = 0;
+    // Initialize each node in the subtree.
     for (int index = worker->StartVertexIndex; index < worker->EndVertexIndex; index++) {
-
+        Node* node = (Node*) malloc(sizeof(Node));
+        node->From = worker->StartVertexIndex;
+        worker->Tree[index] = *node;
     }
 
+    int edges_remaining = worker->EdgeCount;
+    const int length = worker->EndVertexIndex - worker->StartVertexIndex;
+    int* connected_nodes = (int*) malloc(sizeof(int) * length);
+
+    // Randomly connect nodes together.
+    while (edges_remaining > 0) {
+        for (int index = worker->StartVertexIndex; index < worker->EndVertexIndex; index++) {
+            int to_node_index = connect(worker->Tree, &worker->Tree[index]);
+
+            edges_remaining--;
+        }
+    }
+
+    // Connect nodes that were never connected.
+    for (int index = worker->StartVertexIndex; index < worker->EndVertexIndex; index++) {
+        if (!indexed(connected_nodes, length, index)) {
+
+        }
+    }
+
+    free(connected_nodes);
     pthread_exit(NULL);
+
     return NULL;
 }
 
-int** create_tree(const Params params) {
-    int** tree = (int**) malloc(sizeof(int) * params.VerticeCount);
+Node* create_tree(const Params params) {
+    Node* tree = (Node*) malloc(sizeof(Node) * params.VerticeCount);
     const int vertice_base = params.VerticeCount / params.ThreadCount;
     const int vertice_remainder = params.VerticeCount % params.ThreadCount;
     const int edge_base = params.EdgeCount / params.ThreadCount;
@@ -51,7 +91,7 @@ int** create_tree(const Params params) {
         vertex_index = end_vertex_index + 1;
 
         Worker* worker = (Worker*) malloc(sizeof(Worker));
-        worker->Tree = (int**) malloc(sizeof(int) * vertices_for_worker);
+        worker->Tree = (Node*) malloc(sizeof(Node) * vertices_for_worker);
         worker->Seed = params.Seed;
         worker->Directed = params.Directed;
         worker->StartVertexIndex = start_vertex_index;
