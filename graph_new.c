@@ -50,7 +50,7 @@ void* create_subtree(void* arg) {
     const int length = worker->EndVertexIndex - worker->StartVertexIndex;
     int* connected_nodes = (int*) malloc(sizeof(int) * length);
 
-    // Randomly connect nodes together.
+    // TODO: Randomly connect nodes together.
     while (edges_remaining > 0) {
         for (int index = worker->StartVertexIndex; index < worker->EndVertexIndex; index++) {
             int to_node_index = connect(worker->Tree, &worker->Tree[index]);
@@ -59,7 +59,7 @@ void* create_subtree(void* arg) {
         }
     }
 
-    // Connect nodes that were never connected.
+    // TODO: Connect nodes that were never connected.
     for (int index = worker->StartVertexIndex; index < worker->EndVertexIndex; index++) {
         if (!indexed(connected_nodes, length, index)) {
 
@@ -105,6 +105,8 @@ Node* create_tree(const Params params) {
     for (int index = 0; index < params.ThreadCount; index++) {
         pthread_join(threads[index], NULL);
     }
+
+    // TODO: Connect the worker subtrees into one tree.
 
     free(threads);
     free(workers);
