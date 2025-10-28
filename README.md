@@ -13,15 +13,16 @@ This project explores topics in **parallel algorithms** and **parallel computing
 ## Requirements
 - C compiler (e.g., `gcc`)  
 - MPI / OpenMP / Pthreads
-- Linux/Unix environment recommended  
+- Linux/Unix environment recommended
+
+## Parameters
+- To change graph size/parameters, update ./graph in 'run' section in makefile. First command line argument is vertexes, second is edges, third is seed.
+- To change target search value, edit the top of 'search_bfs.c'.
 
 ## How to Build
 ```bash
-# For compiling and running graph builder
-make rung
+# To compile and run graph builder (serial):
+make run
 
-# For compresser
-make runc
-
-# For loader
-make runl
+# To run a search on the graph (serial):
+make runs
