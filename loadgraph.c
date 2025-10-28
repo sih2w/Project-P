@@ -1,3 +1,5 @@
+// This file will be a part of each BFS file. It just loads the arrays from the file into dynamic arrays to be worked with.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,7 +25,7 @@ CSR* load_graph(const char *filename) {
     fread(&g->edge_count, sizeof(int), 1, f);
 
     // allocate arrays
-    g->row_ptr   = malloc((g->edge_count) * sizeof(int));
+    g->row_ptr = malloc((g->edge_count) * sizeof(int));
     g->col_index = malloc(g->total_vertices * sizeof(int));
     if (!g->row_ptr || !g->col_index) {
         fclose(f);
@@ -48,21 +50,22 @@ void free_graph(CSR *g) {
 
 int main() {
 
+	// Load info and store in graph struct
 	CSR *graph = load_graph("savefile");
 
 	////////////////// Testing output ///////////////////////
-	printf("\nrow_ptr:\n");
-	// Print for testing
-	for(int i = 0; i < graph->edge_count; i++) {
-		printf("%d ", graph->row_ptr[i]);
-	}
-	printf("\ncol_index:\n");
+	// printf("\nrow_ptr:\n");
+	// // Print for testing
+	// for(int i = 0; i < graph->edge_count; i++) {
+	// 	printf("%d ", graph->row_ptr[i]);
+	// }
+	// printf("\ncol_index:\n");
 
-	// Print for testing
-	for(int i = 0; i < graph->total_vertices; i++) {
-		printf("%d ", graph->col_index[i]);
-	}
-	printf("\n\n");
+	// // Print for testing
+	// for(int i = 0; i < graph->total_vertices; i++) {
+	// 	printf("%d ", graph->col_index[i]);
+	// }
+	// printf("\n\n");
 
 	free_graph(graph);
 	
