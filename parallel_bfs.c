@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <omp.h>
+#include <string.h>
 
 #define start 0
+#define THREAD_COUNT 32
 
 typedef struct {
     int total_vertices;
@@ -63,13 +66,15 @@ int main(int argc, char* argv[]) {
 	// Load info and store in graph struct
 	CSR *graph = load_graph("savefile");
 
+	omp_set_num_threads(THREAD_COUNT);
+
 	unsigned int seed = atoi(argv[1]);
 
 	// Generate random target number
 	srand(seed);
 	int target = rand() % graph->total_vertices; 
 
-	printf("\n---- Serial ----\n");
+	printf("\n\n---- Parallel ----\n");
 	printf("\nTarget: %d\n", target);
 	printf("Searching...\n");
 
@@ -87,54 +92,94 @@ int main(int argc, char* argv[]) {
 	// }
 	// printf("\n\n");
 
-	////////////////// Serial Search ///////////////////////
+	
 
 	// Initialize Queue and Visited Arrays
 	int *visited = calloc(graph->total_vertices, sizeof(int));
-    int *queue = malloc(graph->total_vertices * sizeof(int));
+
+	int nodes_checked = 0;
 
 	// Track front and rear of queue
     int front = 0;
 	int end = 0;
 	int found = 0;
 
-	// enqueue starting node
-	queue[end++] = start;
+	// Initialize Current Frontier of Nodes
+	int *current_frontier = malloc(graph->total_vertices * sizeof(int));
+	int *next_frontier = malloc(graph->total_vertices * sizeof(int));
+	
+	int current_frontier_size = 0;
+	int next_size = 0;
+	
+	current_frontier[current_frontier_size] = start;
+	current_frontier_size++;
 
 	visited[start] = 1;
-	int nodes_checked = 0;
 
+	while(current_frontier_size > 0) {
+		#pragma omp parallel
+		{
+			int *local = malloc(graph->total_vertices * sizeof(int));
+			int local_count = 0;
+
+			// Each thread takes chunks from the frontier
+			#pragma omp for schedule(dynamic) 
+			for(int i = 0; i < current_frontier_size; i++) {
+				int u = current_frontier[i];
+
+				// Check the neigbors of each vertex in that chunk
+				for (int j = graph->row_ptr[u]; j < graph->row_ptr[u + 1]; j++) {
+					int v = graph->col_index[j];
+
+					busy_work();
+
+					if(v == target) {
+						printf("Found!\n");
+						#pragma omp atomic write
+						found = 1;
+						break;
+					}
 	
-	// Nodes are checked in edge-pairs. u is connected to v by an edge.
-	while(front < end) {
-		// dequeue next node
-		int u = queue[front++];
-		nodes_checked++;
-
-		
-
-		// Look through all of its neigbors
-		for(int i = graph->row_ptr[u]; i < graph->row_ptr[u + 1]; i++) {
-			// Get a neigbor
-			int v = graph->col_index[i];
-
-			// Do busy work
-			busy_work();
-
-			// Check if its the target
-			if(v == target) {
-				printf("Found!\n");
-				front = end;
-				found = 1;
-				break;
+					if (!visited[v]) {
+						// Prevent duplicates
+						#pragma omp critical 
+						{
+							if (!visited[v]) {
+								visited[v] = 1;
+								local[local_count++] = v;
+								nodes_checked++;
+							}
+						}
+					}
+				}
 			}
-			// If that neighbor hasnt been visited, queue it up so its neighbors can be searched
-			if(!visited[v]) {
-				visited[v] = 1;
-				queue[end++] = v;
-			}
+
+			// Merge each thread’s local list
+			#pragma omp critical
+	        {
+	            for(int i = 0; i < local_count; i++) {
+					next_frontier[next_size + i] = local[i];
+				}
+	            next_size += local_count;
+	        }
+
+			free(local);
+			
 		}
+
+		if(found)
+			break;
+
+			        
+	    // Move to next level
+	    memcpy(current_frontier, next_frontier, next_size * sizeof(int));
+		
+	    current_frontier_size = next_size;
+		next_size = 0;
+	    
+		
 	}
+	
 
 	if(!found)
 		printf("Not Found!\n");
@@ -142,8 +187,9 @@ int main(int argc, char* argv[]) {
 	printf("Nodes Checked: %d\n\n", nodes_checked);
 	
 	free(visited);
-	free(queue);
 	free_graph(graph);
+	free(current_frontier);
+	free(next_frontier);
 	
 	return 0;
 }

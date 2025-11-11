@@ -43,26 +43,30 @@ int main() {
 
     fseek(file, 0, SEEK_SET);
 
+	// Count number of neigbors per vertex
     int *deg = (int *)calloc(total_vertices, sizeof(int));
     while(fscanf(file, "%d %d", &u, &v) == 2) {
         deg[u]++;
     }
 
-    // Correct CSR sizes
+    // Store Vertex Locations
     int *row_ptr = calloc(total_vertices + 1, sizeof(int));
+	// Store Neighbors
     int *col_index = calloc(edge_count, sizeof(int));
 
     int pointer = 0;
+	// Store indices of neighbor vertex
     for(int i = 0; i < total_vertices; i++) {
         row_ptr[i] = pointer;
         pointer += deg[i];
     }
+	
     row_ptr[total_vertices] = edge_count;
-
+	// Track next open neighbor slot
     int *next = calloc(total_vertices, sizeof(int));
 
     fseek(file, 0, SEEK_SET);
-
+	// Read edgelist and fill arrays
     while(fscanf(file, "%d %d", &u, &v) == 2) {
         col_index[row_ptr[u] + next[u]] = v;
         next[u]++;

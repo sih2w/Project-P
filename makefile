@@ -1,44 +1,44 @@
 SHELL := /bin/bash
 
-default: graph.c compress.c loadgraph.c
-	gcc graph.c -o graph
-	gcc compress.c -o compress
-	gcc loadgraph.c -o loadgraph
+default:
+	gcc serial_bfs.c -o serial
+	gcc -fopenmp parallel_bfs.c -o parallel
 
-graph: graph.c
-	gcc graph.c -o graph
-
-compress: compress.c
-	gcc compress.c -o compress
-
-load: loadgraph.c
-	gcc loadgraph.c -o loadgraph
-
-search: serial_bfs.c
-	gcc serial_bfs.c -o search
 
 clean:
 	rm -f graph rm -f *.o
 	rm -f loadgraph
 	rm -f compress
-
-rung: graph
-	./graph 100 0 2348952347
-
-runc: compress
-	./compress
-
-runl: load
-	./load
-
-runs: search
-	@start=$$(date +%s%N); \
-	./search; \
-	end=$$(date +%s%N); \
-	elapsed=$$(echo "scale=3; ($$end - $$start)/1000000000" | bc); \
-	echo "Search Time: $$elapsed seconds"
+	rm -f serial
+	rm -f parallel
 
 run:
+	@start=$$(date +%s%N); \
+	./serial 111111; \
+	end=$$(date +%s%N); \
+	elapsed=$$(echo "scale=3; ($$end - $$start)/1000000000" | bc); \
+	echo "Serial Search Time: $$elapsed seconds"
+	@start=$$(date +%s%N); \
+	./parallel 111111; \
+	end=$$(date +%s%N); \
+	elapsed=$$(echo "scale=3; ($$end - $$start)/1000000000" | bc); \
+	echo "Parallel Search Time: $$elapsed seconds"
+
+runs:
+	@start=$$(date +%s%N); \
+	./serial 111111; \
+	end=$$(date +%s%N); \
+	elapsed=$$(echo "scale=3; ($$end - $$start)/1000000000" | bc); \
+	echo "Serial Search Time: $$elapsed seconds"
+
+runp: parallel
+	@start=$$(date +%s%N); \
+	./parallel 111111; \
+	end=$$(date +%s%N); \
+	elapsed=$$(echo "scale=3; ($$end - $$start)/1000000000" | bc); \
+	echo "Parallel Search Time: $$elapsed seconds"
+
+graph:
 	@gcc graph.c -o graph
 	@gcc compress.c -o compress
 	@echo "Creating Graph..." 
