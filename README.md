@@ -22,7 +22,10 @@ This project explores topics in **parallel algorithms** and **parallel computing
 ## How to Build
 ```bash
 # To compile and run graph builder (serial):
-make run
+make graph
 
-# To run a search on the graph (serial):
-make runs
+# To compile bfs files:
+make
+
+# To run serial and parallel search on the graph:
+make run
