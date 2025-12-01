@@ -16,8 +16,12 @@ This project explores topics in **parallel algorithms** and **parallel computing
 - Linux/Unix environment recommended
 
 ## Parameters
-- To change graph size/parameters, update ./graph in 'run' section in makefile. First command line argument is vertexes, second is edges, third is seed.
-- To change target search value, edit the top of 'search_bfs.c'.
+- To change graph size/parameters:
+    - Edit './graph' line in 'run' section in makefile. First argument is vertexes, second is edges, third is seed.
+- To change number of threads in parallel search:
+    - Edit the top of parallel_bfs.c
+- *GRAPH MUST BE BUILT BEFORE SEARCHING*
+    - Instructions below  
 
 ## How to Build
 ```bash
@@ -27,5 +31,14 @@ make graph
 # To compile bfs files:
 make
 
+# To run serial search:
+make runs
+
+# To run parallel search:
+make runp
+
 # To run serial and parallel search on the graph:
 make run
+
+# To run a series of parallel searches:
+make runpt
