@@ -12,7 +12,8 @@ This project explores topics in **parallel algorithms** and **parallel computing
 
 ## Requirements
 - C compiler (e.g., `gcc`)  
-- MPI / OpenMP / Pthreads
+- OpenMP
+- Lua/Roblox IDE
 - Linux/Unix environment recommended
 
 ## Parameters
@@ -20,7 +21,8 @@ This project explores topics in **parallel algorithms** and **parallel computing
     - Edit './graph' line in 'run' section in makefile. First argument is vertexes, second is edges, third is seed.
 - To change number of threads in parallel search:
     - Edit the top of parallel_bfs.c
-- *GRAPH MUST BE BUILT BEFORE SEARCHING*
+      
+- **GRAPH MUST BE BUILT BEFORE SEARCHING**
     - Instructions below  
 
 ## How to Build
